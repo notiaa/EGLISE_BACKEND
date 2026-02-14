@@ -1,0 +1,33 @@
+version: '4.8'
+
+services:
+  santa-mikaely-db:
+    image: postgres:13-alpine
+    restart: always
+    container_name: santa-mikaely-db
+    volumes:
+      - santa-mikaely_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - "${DB_PORT}:5432"
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_NAME}"
+      PGDATA: "/var/lib/postgresql/data"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -h localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  santa-mikaely_data:
+    external: true

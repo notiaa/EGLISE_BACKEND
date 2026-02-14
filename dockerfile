@@ -1,0 +1,22 @@
+
+# Utilisation d'une image Python officielle
+FROM python:3.10-slim
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Copier les fichiers de configuration et les dépendances
+COPY requirements.txt requirements.txt
+COPY .env ./
+
+# Installer les dépendances et nettoyer les fichiers temporaires pour minimiser la taille de l'image
+RUN pip install -r requirements.txt \
+    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y netcat-openbsd
+
+
+# Copier le code source et les fichiers de configuration d'Alembic
+COPY . .
+COPY alembic.ini alembic/
+
+
